@@ -8,6 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "VirtualAcresVehicle.h"
+#include "VirtualAcresTractor.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AVirtualAcresCharacter
@@ -43,6 +45,11 @@ AVirtualAcresCharacter::AVirtualAcresCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	if (GetCapsuleComponent())
+	{
+		GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AVirtualAcresCharacter::OnCompBeginOverlap);
+		GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AVirtualAcresCharacter::OnCompEndOverlap);
+	}
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -57,6 +64,8 @@ void AVirtualAcresCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
+	PlayerInputComponent->BindAction("Interact", IE_Released, this, &AVirtualAcresCharacter::Interact);
+
 	PlayerInputComponent->BindAxis("MoveForward", this, &AVirtualAcresCharacter::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &AVirtualAcresCharacter::MoveRight);
 
@@ -67,29 +76,6 @@ void AVirtualAcresCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 	PlayerInputComponent->BindAxis("TurnRate", this, &AVirtualAcresCharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &AVirtualAcresCharacter::LookUpAtRate);
-
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &AVirtualAcresCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &AVirtualAcresCharacter::TouchStopped);
-
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &AVirtualAcresCharacter::OnResetVR);
-}
-
-
-void AVirtualAcresCharacter::OnResetVR()
-{
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
-
-void AVirtualAcresCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		Jump();
-}
-
-void AVirtualAcresCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		StopJumping();
 }
 
 void AVirtualAcresCharacter::TurnAtRate(float Rate)
@@ -130,5 +116,37 @@ void AVirtualAcresCharacter::MoveRight(float Value)
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+	}
+}
+
+void AVirtualAcresCharacter::Interact()
+{
+	if (interactableVehicle)
+	{
+		if (interactableVehicle->IsA<AVirtualAcresTractor>())
+		{
+			GLog->Log("Entering a tractor");
+
+			APlayerController* controller = GetWorld()->GetFirstPlayerController();
+			controller->UnPossess();
+
+			controller->Possess(interactableVehicle);
+		}
+	}
+}
+
+void AVirtualAcresCharacter::OnCompBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->IsA<AVirtualAcresVehicle>())
+	{
+		interactableVehicle = Cast<AVirtualAcresVehicle>(OtherActor);
+	}
+}
+
+void AVirtualAcresCharacter::OnCompEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherActor->IsA<AVirtualAcresVehicle>())
+	{
+		interactableVehicle = nullptr;
 	}
 }

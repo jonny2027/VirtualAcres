@@ -2,6 +2,7 @@
 
 
 #include "VirtualAcresVehicle.h"
+#include "VirtualAcresVehicleMovementComp.h"
 
 // Sets default values
 AVirtualAcresVehicle::AVirtualAcresVehicle()
@@ -24,6 +25,8 @@ AVirtualAcresVehicle::AVirtualAcresVehicle()
 	interactionCollisionArea = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionCollisionArea"));
 	interactionCollisionArea->AttachToComponent(vehicleSkeletalMesh, FAttachmentTransformRules::KeepRelativeTransform);
 
+	MovementComponent = CreateDefaultSubobject<UVirtualAcresVehicleMovementComp>(TEXT("MovementComponent"));
+	MovementComponent->UpdatedComponent = GetRootComponent();
 }
 
 // Called when the game starts or when spawned
@@ -101,5 +104,10 @@ void AVirtualAcresVehicle::MoveRight(float Value)
 void AVirtualAcresVehicle::Interact()
 {
 	
+}
+
+UPawnMovementComponent* AVirtualAcresVehicle::GetMovementComponent() const
+{
+	return MovementComponent;
 }
 

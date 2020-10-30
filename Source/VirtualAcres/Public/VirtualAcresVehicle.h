@@ -6,33 +6,49 @@
 #include "GameFramework/Pawn.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "WheeledVehicle.h"
 #include "VirtualAcresVehicle.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+class UTextRenderComponent;
+class UInputComponent;
+
 UCLASS()
-class VIRTUALACRES_API AVirtualAcresVehicle : public APawn
+class VIRTUALACRES_API AVirtualAcresVehicle : public AWheeledVehicle
 {
 	GENERATED_BODY()
+
+	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	USpringArmComponent* SpringArm;
+
+	/** Camera component that will be our viewpoint */
+	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* Camera;
+
+	/** SCene component for the In-Car view origin */
+	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* InternalCameraBase;
+
+	/** Camera component for the In-Car view */
+	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UCameraComponent* InternalCamera;
 
 public:
 	// Sets default values for this pawn's properties
 	AVirtualAcresVehicle();
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
-	USkeletalMeshComponent* vehicleSkeletalMesh;
-
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
 	UBoxComponent* interactionCollisionArea;
 
-	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-		float BaseTurnRate;
+	/** Initial offset of incar camera */
+	FVector InternalCameraOrigin;
 
-	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-		float BaseLookUpRate;
+	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
-	UPROPERTY()
-		class UVirtualAcresVehicleMovementComp* MovementComponent;
+	static const FName LookUpBinding;
+	static const FName LookRightBinding;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -61,8 +77,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	virtual UPawnMovementComponent* GetMovementComponent() const override;
+	/** Returns SpringArm subobject **/
+	FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
+	/** Returns Camera subobject **/
+	FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
+	/** Returns InternalCamera subobject **/
+	FORCEINLINE UCameraComponent* GetInternalCamera() const { return InternalCamera; }
 };

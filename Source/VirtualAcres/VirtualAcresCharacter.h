@@ -31,7 +31,7 @@ public:
 
 protected:
 
-	class AVirtualAcresVehicle* interactableVehicle;
+	class AVAVehicle* interactableVehicle;
 
 	void Interact();
 

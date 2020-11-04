@@ -8,8 +8,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "VirtualAcresVehicle.h"
-#include "VirtualAcresTractor.h"
+#include "VAVehicle.h"
+#include "VATractor.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AVirtualAcresCharacter
@@ -123,7 +123,7 @@ void AVirtualAcresCharacter::Interact()
 {
 	if (interactableVehicle)
 	{
-		if (interactableVehicle->IsA<AVirtualAcresTractor>())
+		if (interactableVehicle->IsA<AVATractor>())
 		{
 			GLog->Log("Entering a tractor");
 
@@ -137,15 +137,15 @@ void AVirtualAcresCharacter::Interact()
 
 void AVirtualAcresCharacter::OnCompBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor->IsA<AVirtualAcresVehicle>())
+	if (OtherActor->IsA<AVAVehicle>())
 	{
-		interactableVehicle = Cast<AVirtualAcresVehicle>(OtherActor);
+		interactableVehicle = Cast<AVAVehicle>(OtherActor);
 	}
 }
 
 void AVirtualAcresCharacter::OnCompEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (OtherActor->IsA<AVirtualAcresVehicle>())
+	if (OtherActor->IsA<AVAVehicle>())
 	{
 		interactableVehicle = nullptr;
 	}

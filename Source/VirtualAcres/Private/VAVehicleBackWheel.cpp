@@ -1,8 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "VirtualAcresVehicleBackWheel.h"
+#include "VAVehicleBackWheel.h"
 
-UVirtualAcresVehicleBackWheel::UVirtualAcresVehicleBackWheel()
+UVAVehicleBackWheel::UVAVehicleBackWheel()
 {
 	ShapeRadius = 35.f;
 	ShapeWidth = 10.0f;

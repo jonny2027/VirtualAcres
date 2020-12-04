@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "VirtualAcresVehicle.h"
-#include "VirtualAcresTractor.generated.h"
+#include "VAVehicle.h"
+#include "VATractor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VIRTUALACRES_API AVirtualAcresTractor : public AVirtualAcresVehicle
+class VIRTUALACRES_API AVATractor : public AVAVehicle
 {
 	GENERATED_BODY()
 	

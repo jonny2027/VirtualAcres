@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "VirtualAcresVehicle.h"
-#include "VirtualAcresVehicleFrontWheel.h"
-#include "VirtualAcresVehicleBackWheel.h"
+#include "VAVehicle.h"
+#include "VAVehicleFrontWheel.h"
+#include "VAVehicleBackWheel.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -13,11 +13,11 @@
 #include "UObject/ConstructorHelpers.h"
 #include "GameFramework/Controller.h"
 
-const FName AVirtualAcresVehicle::LookUpBinding("LookUp");
-const FName AVirtualAcresVehicle::LookRightBinding("LookRight");
+const FName AVAVehicle::LookUpBinding("LookUp");
+const FName AVAVehicle::LookRightBinding("LookRight");
 
 // Sets default values
-AVirtualAcresVehicle::AVirtualAcresVehicle()
+AVAVehicle::AVAVehicle()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -80,43 +80,43 @@ AVirtualAcresVehicle::AVirtualAcresVehicle()
 }
 
 // Called when the game starts or when spawned
-void AVirtualAcresVehicle::BeginPlay()
+void AVAVehicle::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AVirtualAcresVehicle::Tick(float DeltaTime)
+void AVAVehicle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
 // Called to bind functionality to input
-void AVirtualAcresVehicle::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AVAVehicle::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	PlayerInputComponent->BindAction("Interact", IE_Released, this, &AVirtualAcresVehicle::Interact);
+	PlayerInputComponent->BindAction("Interact", IE_Released, this, &AVAVehicle::Interact);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &AVirtualAcresVehicle::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AVirtualAcresVehicle::MoveRight);
+	PlayerInputComponent->BindAxis("MoveForward", this, &AVAVehicle::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AVAVehicle::MoveRight);
 	PlayerInputComponent->BindAxis("LookUp");
 	PlayerInputComponent->BindAxis("LookRight");
 }
 
-void AVirtualAcresVehicle::MoveForward(float Val)
+void AVAVehicle::MoveForward(float Val)
 {
 	GetVehicleMovementComponent()->SetThrottleInput(Val);
 }
 
-void AVirtualAcresVehicle::MoveRight(float Val)
+void AVAVehicle::MoveRight(float Val)
 {
 	GetVehicleMovementComponent()->SetSteeringInput(Val);
 }
 
-void AVirtualAcresVehicle::Interact()
+void AVAVehicle::Interact()
 {
 	
 }

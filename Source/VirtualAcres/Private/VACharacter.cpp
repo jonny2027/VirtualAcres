@@ -1,6 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "VirtualAcresCharacter.h"
+#include "VACharacter.h"
+#include "Vehicles/Tractor/VAVehicle.h"
+#include "Vehicles/Tractor/VATractor.h"
+
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -8,13 +11,13 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "VAVehicle.h"
-#include "VATractor.h"
+
+
 
 //////////////////////////////////////////////////////////////////////////
 // AVirtualAcresCharacter
 
-AVirtualAcresCharacter::AVirtualAcresCharacter()
+AVACharacter::AVACharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -47,8 +50,8 @@ AVirtualAcresCharacter::AVirtualAcresCharacter()
 
 	if (GetCapsuleComponent())
 	{
-		GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AVirtualAcresCharacter::OnCompBeginOverlap);
-		GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AVirtualAcresCharacter::OnCompEndOverlap);
+		GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AVACharacter::OnCompBeginOverlap);
+		GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &AVACharacter::OnCompEndOverlap);
 	}
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
@@ -57,40 +60,40 @@ AVirtualAcresCharacter::AVirtualAcresCharacter()
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void AVirtualAcresCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
+void AVACharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
-	PlayerInputComponent->BindAction("Interact", IE_Released, this, &AVirtualAcresCharacter::Interact);
+	PlayerInputComponent->BindAction("Interact", IE_Released, this, &AVACharacter::Interact);
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &AVirtualAcresCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AVirtualAcresCharacter::MoveRight);
+	PlayerInputComponent->BindAxis("MoveForward", this, &AVACharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AVACharacter::MoveRight);
 
 	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
 	// "turn" handles devices that provide an absolute delta, such as a mouse.
 	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &AVirtualAcresCharacter::TurnAtRate);
+	PlayerInputComponent->BindAxis("TurnRate", this, &AVACharacter::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &AVirtualAcresCharacter::LookUpAtRate);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &AVACharacter::LookUpAtRate);
 }
 
-void AVirtualAcresCharacter::TurnAtRate(float Rate)
+void AVACharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
-void AVirtualAcresCharacter::LookUpAtRate(float Rate)
+void AVACharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-void AVirtualAcresCharacter::MoveForward(float Value)
+void AVACharacter::MoveForward(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
@@ -104,7 +107,7 @@ void AVirtualAcresCharacter::MoveForward(float Value)
 	}
 }
 
-void AVirtualAcresCharacter::MoveRight(float Value)
+void AVACharacter::MoveRight(float Value)
 {
 	if ( (Controller != nullptr) && (Value != 0.0f) )
 	{
@@ -119,7 +122,7 @@ void AVirtualAcresCharacter::MoveRight(float Value)
 	}
 }
 
-void AVirtualAcresCharacter::Interact()
+void AVACharacter::Interact()
 {
 	if (interactableVehicle)
 	{
@@ -135,7 +138,7 @@ void AVirtualAcresCharacter::Interact()
 	}
 }
 
-void AVirtualAcresCharacter::OnCompBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AVACharacter::OnCompBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor->IsA<AVAVehicle>())
 	{
@@ -143,7 +146,7 @@ void AVirtualAcresCharacter::OnCompBeginOverlap(UPrimitiveComponent* OverlappedC
 	}
 }
 
-void AVirtualAcresCharacter::OnCompEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AVACharacter::OnCompEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (OtherActor->IsA<AVAVehicle>())
 	{

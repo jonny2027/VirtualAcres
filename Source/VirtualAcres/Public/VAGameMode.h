@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "VirtualAcresGameMode.generated.h"
+#include "VAGameMode.generated.h"
 
 UCLASS(minimalapi)
-class AVirtualAcresGameMode : public AGameModeBase
+class AVAGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
 public:
-	AVirtualAcresGameMode();
+	AVAGameMode();
 };
 
 

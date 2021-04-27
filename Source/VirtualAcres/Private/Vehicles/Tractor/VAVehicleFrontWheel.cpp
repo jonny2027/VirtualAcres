@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "VAVehicleFrontWheel.h"
+#include "Vehicles/Tractor/VAVehicleFrontWheel.h"
 
 UVAVehicleFrontWheel::UVAVehicleFrontWheel()
 {

@@ -1,10 +1,10 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "VirtualAcresGameMode.h"
-#include "VirtualAcresCharacter.h"
+#include "VAGameMode.h"
+#include "VACharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
-AVirtualAcresGameMode::AVirtualAcresGameMode()
+AVAGameMode::AVAGameMode()
 {
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/_Blueprints/PlayerCharacter"));

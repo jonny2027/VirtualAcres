@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "VirtualAcresPlayerController.generated.h"
+#include "VAPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class VIRTUALACRES_API AVirtualAcresPlayerController : public APlayerController
+class VIRTUALACRES_API AVAPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 	
